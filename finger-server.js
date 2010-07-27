@@ -1,6 +1,6 @@
 var net = require('net'),
     sys = require('sys'),
-    listen_address = '127.0.0.1'
+    listen_address = null, // hostname/IP address, or null for all addresses
     listen_port = 79
 ;
 
@@ -23,7 +23,6 @@ net.createServer(function(socket){
     socket.end();
   });
 
-}).listen(listen_port, listen_address);
-
-console.log('Finger server listening on ' + listen_address + ':' + listen_port);
-
+}).listen(listen_port, listen_address, function(){
+  console.log('Finger server listening on ' + (listen_address || '*') + ':' + listen_port);
+});
