@@ -1,28 +1,8 @@
-var net = require('net'),
-    sys = require('sys'),
-    listen_address = null, // hostname/IP address, or null for all addresses
-    listen_port = 79
-;
 
-net.createServer(function(socket){
+var FingerServer = new require('./finger_server');
+FingerServer.listen_address = '127.0.0.1'; // hostname/IP address, or null for all addresses
+//FingerServer.listen_port = 7979; // defaults to 79
+FingerServer.start();
 
-  socket.setEncoding("utf8");
-  console.log('Connection established, remote address: ' + socket.remoteAddress);
+console.log('Finger server listening on ' + (FingerServer.listen_address || '*') + ':' + FingerServer.listen_port);
 
-  socket.on("data", function(data){
-    console.log('Incoming request: [' + data + ']');
-
-    if(data.match(/lindsay/i)){
-      socket.write('lindsay is online & being awesome');
-      socket.end();
-    }
-
-  });
-  socket.on("end", function(){
-    console.log('Connection closed, remote address: ' + socket.remoteAddress);
-    socket.end();
-  });
-
-}).listen(listen_port, listen_address, function(){
-  console.log('Finger server listening on ' + (listen_address || '*') + ':' + listen_port);
-});
