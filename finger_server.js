@@ -17,6 +17,7 @@ exports.allow_list = false; // Allow listing of all users - RFC 1288 section 3.2
 exports.allow_verbose = false; // Allow verbose output - RFC 1288 section 2.5.4
 exports.allow_plan = false; // Allow user information file - RFC 1288 section 3.2.4
 exports.allow_user_scripts = false; // Allow user scripts - RFC 1288 section 3.2.5
+exports.allow_ambiguous = false; // Allow ambiguous user lookup - RFC 1288 section 3.2.6
 
 // Allowed users
 exports.allowed_users = {};
