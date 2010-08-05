@@ -4,8 +4,13 @@ var
     sys = require('sys'),
 
     // Constants
-    REQUEST_MATCH = /^(\/W)?\s*([\+\-\_\.\/\=\?a-z0-9]*)(?:@([@\.:\-0-9a-z]+))*\r\n$/i
+    REQUEST_MATCH = /^(\/W)?\s*([\+\-\_\.\/\=\?a-z0-9]*)(?:@([@\.:\-0-9a-z]+))*\r\n$/i,
 
+    // Error messages
+    E_FORWARDING_NOT_IMPLEMENTED = 'Forwarding not implemented yet',
+    E_FORWARDING_DENIED = 'Finger forwarding service denied',
+    E_USER_LIST_DENIED = 'User listing denied',
+    E_INVALID_REQUEST = 'Invalid request'
 ;
 
 // Defaults
@@ -18,8 +23,6 @@ exports.allow_verbose = false; // Allow verbose output - RFC 1288 section 2.5.4
 exports.allow_plan = false; // Allow user information file - RFC 1288 section 3.2.4
 exports.allow_user_scripts = false; // Allow user scripts - RFC 1288 section 3.2.5
 exports.allow_ambiguous = false; // Allow ambiguous user lookup - RFC 1288 section 3.2.6
-
-// TODO: vars for error messages etc.
 
 // Allowed users
 exports.allowed_users = {};
@@ -100,16 +103,16 @@ exports.handle_request = function(request){
 
   // Invalid request
   if(!request){
-    return 'Invalid request';
+    return E_INVALID_REQUEST;
   }
 
   // Forwarding
   if(request.recursive){
     if(exports.allow_recursive){
       // Forward to next host
-      response = 'Forwarding not implemented yet';
+      response = E_FORWARDING_NOT_IMPLEMENTED;
     }else{
-      response = 'Finger forwarding service denied';
+      response = E_FORWARDING_DENIED;
     }
   }else if(request.list_users){
     if(exports.allow_list){
@@ -119,7 +122,7 @@ exports.handle_request = function(request){
         response = exports.populate_template(exports.list_output_template, request);
       }
     }else{
-      response = "User listing denied";
+      response = E_USER_LIST_DENIED;
     }
   }else{
     if(request.verbose){
@@ -133,6 +136,7 @@ exports.handle_request = function(request){
 };
 
 // Populate template with user data
+// TODO: do it
 exports.populate_template = function(template, request){
   return template;
 };
