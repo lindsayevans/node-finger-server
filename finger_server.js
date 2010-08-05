@@ -38,7 +38,7 @@ exports.start = function(){
 
   net.createServer(function(socket){
 
-    var response;
+    var request, reponse = '';
 
     socket.setEncoding("utf8");
     console.log('Connection established, remote address: ' + socket.remoteAddress);
@@ -47,11 +47,12 @@ exports.start = function(){
       console.log('Incoming request: [' + data + ']');
 
       // Parse request
-      if(!(response = exports.parse_request(data))){
-        socket.write('Invalid request');
-        socket.end();
-      }
+      request = exports.parse_request(data);
+
       // Handle request
+      response = exports.handle_request(request);
+
+      socket.write(response);
       socket.end();
 
     });
@@ -64,7 +65,14 @@ exports.start = function(){
 
 };
 
+// Import configuration
+exports.import_config = function(config){
+  for(k in config){
+   exports[k] = config[k];
+  }
+};
 
+// Parse the finger query
 exports.parse_request = function(data){
 
   var match = REQUEST_MATCH.exec(data),
@@ -81,5 +89,44 @@ exports.parse_request = function(data){
 
   return match || false;
 
+};
+
+// Handle request
+exports.handle_request = function(request){
+
+  var response = '';
+
+  // Invalid request
+  if(!request){
+    return 'Invalid request';
+  }
+
+  // Forwarding
+  if(request.recursive){
+    if(exports.allow_recursive){
+      // Forward to next host
+      response = 'Forwarding not implemented yet';
+    }else{
+      response = 'Finger forwarding service denied';
+    }
+  }else if(request.list_users){
+    if(exports.allow_list){
+      if(request.verbose){
+        response = exports.verbose_list_output_template;
+      }else{
+        response = exports.list_output_template;
+      }
+    }else{
+      response = "User listing denied";
+    }
+  }else{
+    if(request.verbose){
+      response = exports.verbose_user_output_template;
+    }else{
+      response = exports.user_output_template;
+    }
+  }
+
+  return response;
 };
 
