@@ -19,6 +19,8 @@ exports.allow_plan = false; // Allow user information file - RFC 1288 section 3.
 exports.allow_user_scripts = false; // Allow user scripts - RFC 1288 section 3.2.5
 exports.allow_ambiguous = false; // Allow ambiguous user lookup - RFC 1288 section 3.2.6
 
+// TODO: vars for error messages etc.
+
 // Allowed users
 exports.allowed_users = {};
 
@@ -112,21 +114,25 @@ exports.handle_request = function(request){
   }else if(request.list_users){
     if(exports.allow_list){
       if(request.verbose){
-        response = exports.verbose_list_output_template;
+        response = exports.populate_template(exports.verbose_list_output_template, request);
       }else{
-        response = exports.list_output_template;
+        response = exports.populate_template(exports.list_output_template, request));
       }
     }else{
       response = "User listing denied";
     }
   }else{
     if(request.verbose){
-      response = exports.verbose_user_output_template;
+      response = exports.populate_template(exports.verbose_user_output_template, request));
     }else{
-      response = exports.user_output_template;
+      response = exports.populate_template(exports.user_output_template, request));
     }
   }
 
   return response;
 };
 
+// Populate template with user data
+exports.populate_template(template, request)){
+  return template;
+};
