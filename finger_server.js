@@ -116,16 +116,16 @@ exports.handle_request = function(request){
       if(request.verbose){
         response = exports.populate_template(exports.verbose_list_output_template, request);
       }else{
-        response = exports.populate_template(exports.list_output_template, request));
+        response = exports.populate_template(exports.list_output_template, request);
       }
     }else{
       response = "User listing denied";
     }
   }else{
     if(request.verbose){
-      response = exports.populate_template(exports.verbose_user_output_template, request));
+      response = exports.populate_template(exports.verbose_user_output_template, request);
     }else{
-      response = exports.populate_template(exports.user_output_template, request));
+      response = exports.populate_template(exports.user_output_template, request);
     }
   }
 
@@ -133,6 +133,6 @@ exports.handle_request = function(request){
 };
 
 // Populate template with user data
-exports.populate_template(template, request)){
+exports.populate_template = function(template, request){
   return template;
 };
