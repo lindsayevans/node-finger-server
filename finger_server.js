@@ -89,7 +89,7 @@ exports.parse_request = function(data){
 
   console.log(JSON.stringify(request));
 
-  return match || false;
+  return request || false;
 
 };
 
