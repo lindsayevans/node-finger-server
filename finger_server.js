@@ -83,15 +83,17 @@ exports.import_config = function(config){
 exports.parse_request = function(data){
 
   var match = REQUEST_MATCH.exec(data),
-      request = {
-        verbose: match[1] != null,
-        user: match[2],
-        list_users: match[2] === '',
-        hosts: match[3] == null ? [] : match[3].split('@')
-      }
+      request = {}
   ;
-  request.recursive = request.hosts.length !== 0;
-
+  if(match){
+    request.verbose = match[1] != null;
+    request.user = match[2];
+    request.list_users = match[2] === '';
+    request.hosts = match[3] == null ? [] : match[3].split('@');
+    request.recursive = request.hosts.length !== 0;
+  }else{
+    request = null;
+  }
   return request || false;
 
 };
