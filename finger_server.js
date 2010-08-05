@@ -2,6 +2,7 @@ var
     // Requires
     net = require('net'),
     sys = require('sys'),
+    fs = require('fs'),
 
     // Constants
     REQUEST_MATCH = /^(\/W)?\s*([\+\-\_\.\/\=\?a-z0-9]*)(?:@([@\.:\-0-9a-z]+))*\r\n$/i,
@@ -46,13 +47,14 @@ exports.start = function(){
     var request, reponse = '';
 
     socket.setEncoding("utf8");
-    console.log('Connection established, remote address: ' + socket.remoteAddress);
+    exports.log(socket.remoteAddress, 'Connection established');
 
     socket.on("data", function(data){
-      console.log('Incoming request: [' + data + ']');
+      exports.log(socket.remoteAddress, 'Request: ' + data.replace(/[\r\n]*$/g, ''));
 
       // Parse request
       request = exports.parse_request(data);
+      exports.log(socket.remoteAddress, 'Request object: ' + JSON.stringify(request));
 
       // Handle request
       response = exports.handle_request(request);
@@ -62,7 +64,7 @@ exports.start = function(){
 
     });
     socket.on("end", function(){
-      console.log('Connection closed, remote address: ' + socket.remoteAddress);
+      exports.log(socket.remoteAddress, 'Connection closed');
       socket.end();
     });
 
@@ -89,8 +91,6 @@ exports.parse_request = function(data){
       }
   ;
   request.recursive = request.hosts.length !== 0;
-
-  console.log(JSON.stringify(request));
 
   return request || false;
 
@@ -139,4 +139,19 @@ exports.handle_request = function(request){
 // TODO: do it
 exports.populate_template = function(template, request){
   return template;
+};
+
+exports.log = function(remote_address, message){
+  if(!exports.enable_logging) return false;
+
+  var log_stream = fs.createWriteStream(exports.log_path, {flags: 'a'});
+
+  log_stream.addListener('error', function(e) {
+    sys.debug("Error while writing to log file '" + exports.log_path + "': ", e);
+  });
+
+  log_stream.write((new Date()) + ' - ' + remote_address + ' - ' + message + "\r\n");
+  log_stream.end();
+
+  return true;
 };
