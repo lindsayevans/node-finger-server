@@ -1,14 +1,16 @@
 
-var FingerServer = new require('./finger_server');
+var FingerServer = new require('./finger_server'),
+    config = {},
+    sys = require('sys'),
+    fs = require('fs')
+;
 
 // Load config file
-//var config = JSON.parse(fs.open('config.json'));
-//FingerServer.import_config(config);
+fs.readFile('config.json', function(e, data){
+  if(e) throw e;
+  config = JSON.parse(data);
+  FingerServer.import_config(config);
+  FingerServer.start();
+});
 
-FingerServer.listen_address = null; // hostname/IP address, or null for all addresses
-//FingerServer.listen_port = 7979; // defaults to 79
-FingerServer.log_path = './finger.log';
-FingerServer.start();
-
-console.log('Finger server listening on ' + (FingerServer.listen_address || '*') + ':' + FingerServer.listen_port);
-
+// TODO: catch signals & stop/restart/reconfigure

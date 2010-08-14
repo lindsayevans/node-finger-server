@@ -11,6 +11,7 @@ var
     E_FORWARDING_NOT_IMPLEMENTED = 'Forwarding not implemented yet',
     E_FORWARDING_DENIED = 'Finger forwarding service denied',
     E_USER_LIST_DENIED = 'User listing denied',
+    E_UNKNOWN_USER = 'User \'{user_name}\' not found',
     E_INVALID_REQUEST = 'Invalid request'
 ;
 
@@ -57,10 +58,7 @@ exports.start = function(){
       exports.log(socket.remoteAddress, 'Request object: ' + JSON.stringify(request));
 
       // Handle request
-      response = exports.handle_request(request);
-
-      socket.write(response);
-      socket.end();
+      exports.handle_request(request, socket);
 
     });
     socket.on("end", function(){
@@ -69,6 +67,8 @@ exports.start = function(){
     });
 
   }).listen(exports.listen_port, exports.listen_address);
+
+  exports.log(null, 'Listening on ' + (exports.listen_address || '*') + ':' + exports.listen_port);
 
 };
 
@@ -99,60 +99,109 @@ exports.parse_request = function(data){
 };
 
 // Handle request
-exports.handle_request = function(request){
+exports.handle_request = function(request, socket){
 
-  var response = '';
+  var response = '', error = false;
 
   // Invalid request
-  if(!request){
-    return E_INVALID_REQUEST;
-  }
+  if(!request) exports.send_response(E_INVALID_REQUEST, socket);
 
-  // Forwarding
   if(request.recursive){
+    // Forwarding
     if(exports.allow_recursive){
       // Forward to next host
       response = E_FORWARDING_NOT_IMPLEMENTED;
+      error = true;
     }else{
       response = E_FORWARDING_DENIED;
+      error = true;
     }
   }else if(request.list_users){
+    // List users
     if(exports.allow_list){
       if(request.verbose){
-        response = exports.populate_template(exports.verbose_list_output_template, request);
+        response = exports.verbose_list_output_template;
       }else{
-        response = exports.populate_template(exports.list_output_template, request);
+        response = exports.list_output_template;
       }
     }else{
       response = E_USER_LIST_DENIED;
+      error = true;
     }
   }else{
+    // Single user
     if(request.verbose){
-      response = exports.populate_template(exports.verbose_user_output_template, request);
+      response = exports.verbose_user_output_template;
     }else{
-      response = exports.populate_template(exports.user_output_template, request);
+      response = exports.user_output_template;
     }
   }
 
-  return response;
+  if(error){
+    exports.send_response(response, socket);
+  }else{
+    exports.populate_template(response, request, socket);
+  }
+
 };
 
 // Populate template with user data
 // TODO: do it
-exports.populate_template = function(template, request){
-  return template;
+exports.populate_template = function(template, request, socket){
+
+  var user, response = '', plan = 'No plan';
+
+  if(request.list_users){
+
+  }else{
+    user = exports.allowed_users[request.user];
+    if(!user) return E_UNKNOWN_USER.replace(/{user_name}/g, request.user);
+
+    if(exports.allow_plan && user.plan){
+      fs.readFile(exports.user_dir + '/' + request.user + '/.plan', function(e, data){
+	if(e) throw e;
+	response = template
+	  .replace(/{user_name}/g, request.user)
+	  .replace(/{full_name}/g, user.full_name)
+	  .replace(/{online}/g, user.online ? 'yes' : 'no')
+	  .replace(/{plan}/g, data)
+	;
+	exports.send_response(response, socket);
+      });
+    }else{
+	response = template
+	  .replace(/{user_name}/g, request.user)
+	  .replace(/{full_name}/g, user.full_name)
+	  .replace(/{online}/g, user.online ? 'yes' : 'no')
+	  .replace(/{plan}/g, plan)
+	;
+	exports.send_response(response, socket);
+    }
+  }
+
+};
+
+exports.send_response = function(response, socket){
+  socket.write(response);
+  socket.end();
 };
 
 exports.log = function(remote_address, message){
   if(!exports.enable_logging) return false;
 
-  var log_stream = fs.createWriteStream(exports.log_path, {flags: 'a'});
+  var log_stream = fs.createWriteStream(exports.log_path, {flags: 'a'}),
+      log_message = ''
+  ;
+
+  log_message = (new Date()) + ' - ';
+  if(remote_address != null) log_message += remote_address + ' - ';
+  log_message += message;
 
   log_stream.addListener('error', function(e) {
     sys.debug("Error while writing to log file '" + exports.log_path + "': ", e);
   });
 
-  log_stream.write((new Date()) + ' - ' + remote_address + ' - ' + message + "\r\n");
+  log_stream.write(log_message + "\r\n");
   log_stream.end();
 
   return true;
