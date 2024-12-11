@@ -1,2 +1,2 @@
-*.swp
-finger.log
+dist
+node_modules
