@@ -45,7 +45,7 @@ export class FingerDaemon {
         socket.on('data', async (data) => {
           this.config.logger?.log(socket.remoteAddress, 'Request: ' + data);
 
-          const request = parseRequest(data.toString().trim());
+          const request = parseRequest(data.toString());
 
           let response = '';
 
