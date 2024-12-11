@@ -10,7 +10,6 @@ export const parseRequest = (rawRequest: string): ListRequest | UserRequest => {
 
   if (match && match.groups) {
     const { verbose, user, hosts } = match.groups;
-    console.log({ verbose, user, hosts });
     request.verbose = verbose === '/W';
 
     if (user) {

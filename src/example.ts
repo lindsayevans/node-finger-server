@@ -27,9 +27,3 @@ fing.on('user', async (r) => {
 fing.listen(HOST, Number(PORT), () => {
   console.log('Listening on ' + HOST + ':' + PORT);
 });
-
-// Shutdown gracefully
-process.on('SIGTERM', async () => {
-  await fing.shutdown();
-  process.exit();
-});

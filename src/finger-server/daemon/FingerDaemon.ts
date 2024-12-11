@@ -43,22 +43,32 @@ export class FingerDaemon {
         this.config.logger?.log(socket.remoteAddress, 'Connection established');
 
         socket.on('data', async (data) => {
-          this.config.logger?.log(socket.remoteAddress, 'Request: ' + data);
+          try {
+            this.config.logger?.log(socket.remoteAddress, 'Request: ' + data);
 
-          const request = parseRequest(data.toString());
+            const request = parseRequest(data.toString());
 
-          let response = '';
+            let response = '';
 
-          const handlerResponse = await this.requestHandlers[
-            'username' in request ? 'user' : 'list'
-          ](request);
-          if (handlerResponse) {
-            response = handlerResponse;
+            const handlerResponse = await this.requestHandlers[
+              'username' in request ? 'user' : 'list'
+            ](request);
+            if (handlerResponse) {
+              response = handlerResponse;
+            }
+
+            socket.write(response);
+          } catch (e) {
+            this.config.logger?.error(
+              socket.remoteAddress,
+              'Error handling request:',
+              e
+            );
+          } finally {
+            socket.end();
           }
-
-          socket.write(response);
-          socket.end();
         });
+
         socket.on('end', () => {
           this.config.logger?.log(socket.remoteAddress, 'Connection closed');
           socket.end();
@@ -67,11 +77,5 @@ export class FingerDaemon {
       .listen(port, host);
 
     cb();
-  }
-
-  async shutdown() {
-    this.config.logger?.log('Shutting down...');
-    // TODO: close all connections in pool
-    // socket.destroy();
   }
 }
