@@ -1,10 +1,18 @@
 {
   "name": "finger-server",
   "version": "2.0.0",
-  "description": "",
+  "description": "Implementation of a finger daemon for NodeJS",
   "main": "dist/index.js",
+  "exports": {
+    "./*": {
+      "types": "./dist/types/*.d.ts",
+      "require": "./dist/cjs/*.js",
+      "import": "./dist/esm/*.js",
+      "default": "./dist/esm/*.js"
+    }
+  },
   "scripts": {
-    "build": "tsc",
+    "build": "rm -rf ./dist && tsc -b ./tsconfig.cjs.json ./tsconfig.esm.json ./tsconfig.types.json && echo '{\"type\":\"module\"}' > dist/esm/package.json",
     "start:example": "tsx watch src/example.ts",
     "test": "jest",
     "test:watch": "jest --watch"

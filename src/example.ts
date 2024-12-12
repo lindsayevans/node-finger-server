@@ -1,6 +1,5 @@
+import { FingerDaemon, ListRequest, UserRequest } from './finger-server';
 import { exampleUsers } from './exampleUsers';
-import { ListRequest, UserRequest } from './finger-server';
-import { FingerDaemon } from './finger-server/daemon/FingerDaemon';
 
 import Table from 'table-layout';
 
