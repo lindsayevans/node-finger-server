@@ -39,7 +39,7 @@ export class FingerDaemon {
   }
 
   /** Starts the finger daemon listening on the specified host & port */
-  listen(host: string, port: number, cb = () => {}) {
+  listen(host?: string, port: number = 79, cb = () => {}) {
     net
       .createServer((socket) => {
         socket.setEncoding('utf8');
