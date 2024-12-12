@@ -27,4 +27,10 @@ describe('Request parser', () => {
     expect('username' in req).toBeTruthy();
     expect(req.verbose).toBeTruthy();
   });
+
+  test('handles recursive requests', () => {
+    const req = parseRequest('@foo@bar' + CRLF);
+    expect(req.hosts).toBeDefined();
+    expect(req.hosts?.length).toBe(2);
+  });
 });
