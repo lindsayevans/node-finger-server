@@ -1,8 +1,10 @@
 {
-  "name": "finger-server",
+  "name": "@querc/finger-server",
   "version": "2.0.0",
   "description": "Implementation of a finger daemon for NodeJS",
-  "main": "dist/index.js",
+  "main": "./dist/cjs/lib.js",
+  "module": "./dist/esm/lib.js",
+  "types": "index.d.ts",
   "exports": {
     "./*": {
       "types": "./dist/types/*.d.ts",
@@ -16,6 +18,10 @@
     "start:example": "tsx watch src/example.ts",
     "test": "jest",
     "test:watch": "jest --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lindsayevans/node-finger-server/"
   },
   "keywords": [],
   "author": "Lindsay Evans <linz@linz.id.au>",
