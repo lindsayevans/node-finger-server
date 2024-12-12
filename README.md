@@ -1,12 +1,32 @@
 # finger-server
 
-Implementation of a finger daemon for NodeJS
+Implementation of a [finger daemon](<https://en.wikipedia.org/wiki/Finger_(protocol)>) for NodeJS
 
-https://en.wikipedia.org/wiki/Finger_(protocol)
-https://datatracker.ietf.org/doc/html/rfc742
-https://datatracker.ietf.org/doc/html/rfc1288
+## Usage
 
-Example in [`src/example.ts`](./src/example.ts)
+```sh
+npm i @querc/finger-server
+```
+
+Basic example:
+
+```ts
+import { FingerDaemon } from '@querc/finger-server';
+
+const fd = new FingerDaemon();
+
+fd.on('list', (req) => {
+  return '[list of users]';
+});
+
+fd.on('user', (req) => {
+  return '[user details]';
+});
+
+fd.listen();
+```
+
+See full example in [`src/example.ts`](./src/example.ts)
 
 ```sh
 sudo pnpm start:example
