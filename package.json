@@ -15,7 +15,14 @@
     "type": "git",
     "url": "https://github.com/lindsayevans/node-finger-server/"
   },
-  "keywords": [],
+  "keywords": [
+    "nodejs",
+    "finger",
+    "server",
+    "daemon",
+    "rfc742",
+    "rfc1288"
+  ],
   "author": "Lindsay Evans <linz@linz.id.au>",
   "license": "MIT",
   "devDependencies": {
