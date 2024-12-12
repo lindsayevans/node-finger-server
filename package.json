@@ -1,6 +1,6 @@
 {
   "name": "@querc/finger-server",
-  "version": "2.0.1-next.1",
+  "version": "2.0.1",
   "description": "Implementation of a finger daemon for NodeJS",
   "main": "./dist/cjs/index.js",
   "module": "./dist/esm/index.js",
