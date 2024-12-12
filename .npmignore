@@ -2,3 +2,5 @@ src
 pnpm-lock.yaml
 jest.config.js
 tsconfig.*
+.github
+RELEASE_PROCESS.md
