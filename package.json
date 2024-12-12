@@ -2,17 +2,9 @@
   "name": "@querc/finger-server",
   "version": "2.0.1-next.0",
   "description": "Implementation of a finger daemon for NodeJS",
-  "main": "./dist/cjs/lib.js",
-  "module": "./dist/esm/lib.js",
-  "types": "index.d.ts",
-  "exports": {
-    "./*": {
-      "types": "./dist/types/*.d.ts",
-      "require": "./dist/cjs/*.js",
-      "import": "./dist/esm/*.js",
-      "default": "./dist/esm/*.js"
-    }
-  },
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/esm/index.js",
+  "types": "./dist/types/index.d.ts",
   "scripts": {
     "build": "rm -rf ./dist && tsc -b ./tsconfig.cjs.json ./tsconfig.esm.json ./tsconfig.types.json && echo '{\"type\":\"module\"}' > dist/esm/package.json",
     "start:example": "tsx watch src/example.ts",
