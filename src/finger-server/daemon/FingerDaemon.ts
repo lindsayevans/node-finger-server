@@ -13,6 +13,7 @@ type RequestType<T> = T extends 'list'
   ? UserRequest
   : never;
 
+/** Creates a new finger daemon */
 export class FingerDaemon {
   private config!: Configuration;
 
@@ -27,6 +28,7 @@ export class FingerDaemon {
     this.config = Object.assign({}, DefaultConfiguration, config);
   }
 
+  /** Handle requests */
   on<T extends RequestTypeName>(
     type: T,
     handler: (request: RequestType<T>) => Promise<void | string> = async (
@@ -36,6 +38,7 @@ export class FingerDaemon {
     this.requestHandlers[type] = handler;
   }
 
+  /** Starts the finger daemon listening on the specified host & port */
   listen(host: string, port: number, cb = () => {}) {
     net
       .createServer((socket) => {

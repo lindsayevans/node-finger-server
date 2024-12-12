@@ -10,11 +10,11 @@ sudo pnpm start:example
 ```sh
 # List users:
 finger @localhost
-# Get user 'foo':
-finger foo@localhost
+# Get user 'alice':
+finger alice@localhost
 # Verbose:
 finger -l @localhost
-finger -l foo@localhost
+finger -l charles@localhost
 ```
 
 ```sh
